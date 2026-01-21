@@ -3,6 +3,7 @@ import { useState } from "react"
 
 //
 import Form from "./components/Form"
+import Loading from "./components/Loading"
 import Results from "./components/Results"
 import Title from "./components/Title"
 
@@ -17,6 +18,9 @@ type ResultsState = {
 
 //
 const App = () => {
+  //
+  const [loading, setLoading] = useState<boolean>(false)
+
   //
   const [city, setCity] = useState<string>("")
 
@@ -33,6 +37,11 @@ const App = () => {
   const getWeather = (e: React.FormEvent<HTMLFormElement>) => {
     //<form> を送信する時にデフォルトでリロードが起きる動作への対応
     e.preventDefault()
+
+    //
+    setLoading(true)
+
+    //
     fetch(`https://api.weatherapi.com/v1/current.json?key=51562c11f3a14c8fbf730341262101&q=${city}&aqi=no`)
       .then(res => res.json())
       // .then(data => console.log(data))
@@ -44,6 +53,7 @@ const App = () => {
           conditionText: data.current.condition.text,
           icon: data.current.condition.icon
         })
+        setLoading(false)
       })
   }
 
@@ -53,7 +63,7 @@ const App = () => {
       <div className="container">
         <Title />
         <Form setCity={setCity} getWeather={getWeather} />
-        <Results results={results} />
+        {loading ? <Loading/> : <Results results={results}/>}
       </div>
     </div >
   )
